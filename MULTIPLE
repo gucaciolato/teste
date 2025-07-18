@@ -1,0 +1,86 @@
+import os
+import re
+
+def update_imports(filepath):
+    """
+    Updates import statements in a file, replacing
+    `import { ... } from "/lib/database-actions"` with
+    `import { ... } from "@/lib/database-actions"`.
+    """
+    try:
+        with open(filepath, 'r') as f:
+            content = f.read()
+
+        # Regex to find the import statement
+        pattern = r"import {\s\*\s} from \"\/lib\/database-actions\""
+        replacement = r'import { * } from "@/lib/database-actions"'
+
+        new_content = re.sub(pattern, replacement, content)
+
+        with open(filepath, 'w') as f:
+            f.write(new_content)
+
+        return True
+    except FileNotFoundError:
+        print(f"File not found: {filepath}")
+        return False
+    except Exception as e:
+        print(f"Error processing {filepath}: {e}")
+        return False
+
+def process_files():
+    """
+    Processes the specified files to update import statements.
+    """
+    files_to_update = [
+        "app/clients/page.tsx",
+        "app/clients/new/page.tsx",
+        "app/clients/[id]/edit/page.tsx",
+        "app/procedures/page.tsx",
+        "app/procedures/new/page.tsx",
+        "app/procedures/[id]/edit/page.tsx",
+        "app/appointments/page.tsx",
+        "app/appointments/new/page.tsx",
+    ]
+
+    updated_count = 0
+    for filepath in files_to_update:
+        if update_imports(filepath):
+            print(f"Updated: {filepath}")
+            updated_count += 1
+        else:
+            print(f"Failed to update: {filepath}")
+
+    print(f"\nSuccessfully updated {updated_count} files.")
+
+# Simulate directory structure and file creation (for testing)
+def create_dummy_files():
+    os.makedirs("app/clients/new", exist_ok=True)
+    os.makedirs("app/clients/[id]/edit", exist_ok=True)
+    os.makedirs("app/procedures/new", exist_ok=True)
+    os.makedirs("app/procedures/[id]/edit", exist_ok=True)
+    os.makedirs("app/appointments/new", exist_ok=True)
+
+    dummy_content = 'import { * } from "/lib/database-actions";\n// rest of the code'
+
+    with open("app/clients/page.tsx", "w") as f:
+        f.write(dummy_content)
+    with open("app/clients/new/page.tsx", "w") as f:
+        f.write(dummy_content)
+    with open("app/clients/[id]/edit/page.tsx", "w") as f:
+        f.write(dummy_content)
+    with open("app/procedures/page.tsx", "w") as f:
+        f.write(dummy_content)
+    with open("app/procedures/new/page.tsx", "w") as f:
+        f.write(dummy_content)
+    with open("app/procedures/[id]/edit/page.tsx", "w") as f:
+        f.write(dummy_content)
+    with open("app/appointments/page.tsx", "w") as f:
+        f.write(dummy_content)
+    with open("app/appointments/new/page.tsx", "w") as f:
+        f.write(dummy_content)
+
+# Main execution
+if __name__ == "__main__":
+    create_dummy_files() # Create dummy files for testing
+    process_files()
